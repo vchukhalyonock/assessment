@@ -4,6 +4,8 @@ import {ComposerListResponseDto} from "./dto/composer-list-response.dto";
 import {ComposerResponseDto} from "./dto/composer-response.dto";
 import {ContactService} from "../contact/contact.service";
 import {ComposerContactReponseDto} from "./dto/composer-contact-reponse.dto";
+import {ComposerSearchDto} from "./dto/composer-search.dto";
+import {Composer} from "./entities/composer.entity";
 
 @Injectable()
 export class ComposerService {
@@ -16,7 +18,7 @@ export class ComposerService {
 
   findAll(): ComposerListResponseDto {
     return {
-      list: this.composerRepository.findAll().map(composer => ({ ...composer, contact: this.contactService.getContactById(composer.id)})),
+      list: this.addContacts(this.composerRepository.findAll())
     }
   }
 
@@ -31,5 +33,15 @@ export class ComposerService {
 
   getContacts(id: number): ComposerContactReponseDto {
     return { contacts: this.contactService.getContactById(id) }
+  }
+
+  search(dto: ComposerSearchDto): ComposerListResponseDto {
+    return {
+      list: this.addContacts(this.composerRepository.search(dto)),
+    }
+  }
+
+  private addContacts(composers: Composer[]): ComposerResponseDto[] {
+    return composers.map(composer => ({ ...composer, contact: this.contactService.getContactById(composer.id)}))
   }
 }

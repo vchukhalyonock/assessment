@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus} from '@nestjs/common';
 import { ComposerService } from './composer.service';
 import {ApiOkResponse, ApiTags} from "@nestjs/swagger";
 import {CURRENT_VERSION} from "../consts";
 import {ComposerListResponseDto} from "./dto/composer-list-response.dto";
 import {ComposerResponseDto} from "./dto/composer-response.dto";
 import {ComposerContactReponseDto} from "./dto/composer-contact-reponse.dto";
+import {ComposerSearchDto} from "./dto/composer-search.dto";
 
 @Controller({
   path: 'composer',
@@ -30,5 +31,12 @@ export class ComposerController {
   @ApiOkResponse({ type: ComposerContactReponseDto })
   getContacts(@Param('id') id: string): ComposerContactReponseDto {
     return this.composerService.getContacts(+id);
+  }
+
+  @Post('search')
+  @ApiOkResponse({ type: ComposerListResponseDto })
+  @HttpCode(HttpStatus.OK)
+  search(@Body() dto: ComposerSearchDto): ComposerListResponseDto {
+    return this.composerService.search(dto);
   }
 }
